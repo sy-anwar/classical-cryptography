@@ -6,7 +6,7 @@ class Gui:
 	def __init__(self):
 		self.window = Tk()
 		self.window.title("Tugas Kecil 1 IF4020 13517139 13517140")
-		self.window.geometry('540x540')
+		self.window.geometry('540x590')
 
 		self.label_plaintext = Label(self.window, text="Plaintext")
 		self.label_plaintext.grid(column=0, row=0, sticky=W, padx=10)
@@ -65,6 +65,9 @@ class Gui:
 		self.btn_openfile_chipertext = Button(self.window, text="Open File Chipertext")
 		self.btn_openfile_chipertext.grid(column=2, row=7, sticky=E, pady=(20, 5), padx=20)
 	
+		self.btn_savefile_ciphertext = Button(self.window, text="Save File Chipertext", width=70)
+		self.btn_savefile_ciphertext.grid(column=0, row=9, sticky='', pady=(20, 5), padx=20, columnspan=3)
+
 	def handler(self, event):
 		current = self.combobox_algorithms.current()
 		if current == 0 : # Vigenere
