@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import scrolledtext
 from tkinter import ttk
+from tkinter import filedialog
 from full_vigenere import FullVigenere
 from auto_key_vigenere import AutoKeyVigenere
 from playfair import Playfair
@@ -19,7 +20,7 @@ class Gui:
 		self.plaintext = scrolledtext.ScrolledText(self.window, width=65, height=10)
 		self.plaintext.grid(column=0, row=1, columnspan=3, padx=5)
 
-		self.btn_openfile_plaintext = Button(self.window, text="Open File Plaintext")
+		self.btn_openfile_plaintext = Button(self.window, text="Open File Plaintext", command=self.choose_plaintext_file)
 		self.btn_openfile_plaintext.grid(column=2, row=0, sticky=E, pady=5, padx=20)
 
 		self.algorithms = ['Vigenere Cipher', 'Full Vigenere Cipher', 'Auto-key Vigenere Cipher',
@@ -67,16 +68,17 @@ class Gui:
 		self.chipertext = scrolledtext.ScrolledText(self.window, width=65, height=10)
 		self.chipertext.grid(column=0, row=8, columnspan=3, padx=5)
 
-		self.btn_openfile_chipertext = Button(self.window, text="Open File Chipertext")
+		self.btn_openfile_chipertext = Button(self.window, text="Open File Chipertext", command=self.choose_chipertext_file)
 		self.btn_openfile_chipertext.grid(column=2, row=7, sticky=E, pady=(20, 5), padx=20)
 	
-		self.btn_savefile_ciphertext = Button(self.window, text="Save File Chipertext", width=70)
+		self.btn_savefile_ciphertext = Button(self.window, text="Save File Chipertext", width=70, command=self.save_chipertext_file)
 		self.btn_savefile_ciphertext.grid(column=0, row=9, sticky='', pady=(20, 5), padx=20, columnspan=3)
 
 		self.FullVigenere = FullVigenere()
 		self.AutoKeyVigenere = AutoKeyVigenere()
 		self.PlayFair = Playfair()
 		self.AffineChiper = AffineChiper()
+
 	def handler(self, event):
 		current = self.combobox_algorithms.current()
 		if current == 0 : # Vigenere
@@ -203,8 +205,9 @@ class Gui:
 	def encrypt_clicked(self) :
 		current = self.combobox_algorithms.current()
 		if current == 0 : # Vigenere
-			self.key.get()
-			self.spaces.get()
+			# self.key.get()
+			# self.spaces.get()
+			pass
 		elif current == 1 : # Full Vigenere
 			plaintext = self.plaintext.get("1.0", "end-1c")
 			key = self.key.get()
@@ -224,8 +227,9 @@ class Gui:
 			
 			print("key for decrypt : ", key_fix)
 		elif current == 3 : # Extended Vigenere
-			self.key.get()
-			self.spaces.get()
+			# self.key.get()
+			# self.spaces.get()
+			pass
 		elif current == 4 : # Playfair
 			plaintext = self.plaintext.get("1.0", "end-1c")
 			key = self.key.get()
@@ -235,9 +239,10 @@ class Gui:
 			self.chipertext.delete("1.0", END)
 			self.chipertext.insert("1.0", chipertext)
 		elif current == 5 : # Super Encription
-			self.key.get()
-			self.n_transpotition.get()
-			self.spaces.get()
+			# self.key.get()
+			# self.n_transpotition.get()
+			# self.spaces.get()
+			pass
 		elif current == 6 : # Affine
 			plaintext = self.plaintext.get("1.0", "end-1c")
 			m = int(self.m.get())
@@ -248,15 +253,15 @@ class Gui:
 			self.chipertext.delete("1.0", END)
 			self.chipertext.insert("1.0", chipertext)
 		elif current == 7 : # Hill
-			self.key.get()
-			self.spaces.get()
+			# self.key.get()
+			# self.spaces.get()
+			pass
 
 	def decrypt_clicked(self):
 		current = self.combobox_algorithms.current()
 		
 		if current == 0 : # Vigenere
-			self.key.get()
-			self.spaces.get()
+			pass
 		elif current == 1 : # Full Vigenere
 			chipertext = self.chipertext.get("1.0", "end-1c")
 			key = self.key.get()
@@ -274,8 +279,7 @@ class Gui:
 			self.plaintext.delete("1.0", END)
 			self.plaintext.insert("1.0", plaintext)
 		elif current == 3 : # Extended Vigenere
-			self.key.get()
-			self.spaces.get()
+			pass
 		elif current == 4 : # Playfair
 			chipertext = self.chipertext.get("1.0", "end-1c")
 			key = self.key.get()
@@ -285,9 +289,7 @@ class Gui:
 			self.plaintext.delete("1.0", END)
 			self.plaintext.insert("1.0", plaintext)
 		elif current == 5 : # Super Encription
-			self.key.get()
-			self.n_transpotition.get()
-			self.spaces.get()
+			pass
 		elif current == 6 : # Affine
 			chipertext = self.chipertext.get("1.0", "end-1c")
 			m = int(self.m.get())
@@ -298,8 +300,33 @@ class Gui:
 			self.plaintext.delete("1.0", END)
 			self.plaintext.insert("1.0", plaintext)
 		elif current == 7 : # Hill
-			self.key.get()
-			self.spaces.get()
+			pass
 
+	def choose_plaintext_file(self) :
+		filename = filedialog.askopenfilename()
+		if filename != '' :
+			file = open(filename, "rb")
+			content = file.read()
+			self.plaintext.delete("1.0", END)
+			self.plaintext.insert("1.0", content)
+			file.close()
+	
+	def choose_chipertext_file(self) :
+		filename = filedialog.askopenfilename()
+		if filename != '' :
+			file = open(filename, "rb")
+			content = file.read()
+			self.chipertext.delete("1.0", END)
+			self.chipertext.insert("1.0", content)
+			file.close()
+
+	def save_chipertext_file(self) :
+		filename = filedialog.asksaveasfilename()
+		if filename != '' :
+			file = open(filename, "wb")
+			content = self.chipertext.get("1.0", "end-1c")
+			file.write(bytes(content.encode()))
+			file.close()
+			
 gui = Gui()
 gui.window.mainloop()
