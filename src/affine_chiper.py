@@ -17,7 +17,7 @@ class AffineChiper:
 		
 	def encrypt_affine(self, plaintext, m, b, spaces=0):
 		if not self.isCoprime(m, 26) :
-			return 'm tidak relative prima dengan 26'
+			return 'tidak bisa dienkripsi! m tidak relative prima dengan 26'
 
 		plaintext = self.regex.sub('', plaintext.lower())	
 		result = ''
@@ -32,7 +32,7 @@ class AffineChiper:
 
 	def decrypt_affine(self, chipertext, m, b, spaces=0) :
 		if not self.isCoprime(m, 26) :
-			return 'm tidak relative prima dengan 26'
+			return 'tidak bisa didekripsi! m tidak relative prima dengan 26'
 
 		chipertext = self.regex.sub('', chipertext.upper())	
 		result = ''

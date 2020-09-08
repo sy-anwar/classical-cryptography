@@ -1,6 +1,11 @@
 from tkinter import *
 from tkinter import scrolledtext
 from tkinter import ttk
+from full_vigenere import FullVigenere
+from auto_key_vigenere import AutoKeyVigenere
+from playfair import Playfair
+from affine_chiper import AffineChiper
+import string
 
 class Gui:
 	def __init__(self):
@@ -50,10 +55,10 @@ class Gui:
 		self.spaces = Entry(self.window, width=40)
 		self.spaces.grid(column=1, row=5, sticky=W)
 
-		self.btn_encrypt = Button(self.window, text="Encrypt", width=15)
+		self.btn_encrypt = Button(self.window, text="Encrypt", width=15, command=self.encrypt_clicked)
 		self.btn_encrypt.grid(column=2, row=3, sticky='E', padx=20)
 
-		self.btn_decrypt = Button(self.window, text="Decrypt", width=15)
+		self.btn_decrypt = Button(self.window, text="Decrypt", width=15, command=self.decrypt_clicked)
 		self.btn_decrypt.grid(column=2, row=4, sticky='E', padx=20)
 
 		self.label_chipertext = Label(self.window, text="Chipertext")
@@ -68,6 +73,10 @@ class Gui:
 		self.btn_savefile_ciphertext = Button(self.window, text="Save File Chipertext", width=70)
 		self.btn_savefile_ciphertext.grid(column=0, row=9, sticky='', pady=(20, 5), padx=20, columnspan=3)
 
+		self.FullVigenere = FullVigenere()
+		self.AutoKeyVigenere = AutoKeyVigenere()
+		self.PlayFair = Playfair()
+		self.AffineChiper = AffineChiper()
 	def handler(self, event):
 		current = self.combobox_algorithms.current()
 		if current == 0 : # Vigenere
@@ -190,6 +199,107 @@ class Gui:
 
 			self.label_b.grid_remove()
 			self.b.grid_remove()
+
+	def encrypt_clicked(self) :
+		current = self.combobox_algorithms.current()
+		if current == 0 : # Vigenere
+			self.key.get()
+			self.spaces.get()
+		elif current == 1 : # Full Vigenere
+			plaintext = self.plaintext.get("1.0", "end-1c")
+			key = self.key.get()
+			spaces = int(self.spaces.get())
+			
+			chipertext = self.FullVigenere.encrypt_full_vigenere(plaintext, key, spaces)
+			self.chipertext.delete("1.0", END)
+			self.chipertext.insert("1.0", chipertext)
+		elif current == 2 : # Auto-key Vigenere
+			plaintext = self.plaintext.get("1.0", "end-1c")
+			key = self.key.get()
+			spaces = int(self.spaces.get())
+
+			chipertext, key_fix = self.AutoKeyVigenere.encrypt_auto_key_vigenere(plaintext, key, spaces)
+			self.chipertext.delete("1.0", END)
+			self.chipertext.insert("1.0", chipertext)
+			
+			print("key for decrypt : ", key_fix)
+		elif current == 3 : # Extended Vigenere
+			self.key.get()
+			self.spaces.get()
+		elif current == 4 : # Playfair
+			plaintext = self.plaintext.get("1.0", "end-1c")
+			key = self.key.get()
+			spaces = int(self.spaces.get())
+			
+			chipertext = self.PlayFair.encrypt_playfair(plaintext, key, spaces)
+			self.chipertext.delete("1.0", END)
+			self.chipertext.insert("1.0", chipertext)
+		elif current == 5 : # Super Encription
+			self.key.get()
+			self.n_transpotition.get()
+			self.spaces.get()
+		elif current == 6 : # Affine
+			plaintext = self.plaintext.get("1.0", "end-1c")
+			m = int(self.m.get())
+			b = int(self.b.get())
+			spaces = int(self.spaces.get())
+
+			chipertext = self.AffineChiper.encrypt_affine(plaintext, m, b, spaces)
+			self.chipertext.delete("1.0", END)
+			self.chipertext.insert("1.0", chipertext)
+		elif current == 7 : # Hill
+			self.key.get()
+			self.spaces.get()
+
+	def decrypt_clicked(self):
+		current = self.combobox_algorithms.current()
+		
+		if current == 0 : # Vigenere
+			self.key.get()
+			self.spaces.get()
+		elif current == 1 : # Full Vigenere
+			chipertext = self.chipertext.get("1.0", "end-1c")
+			key = self.key.get()
+			spaces = int(self.spaces.get())
+			
+			plaintext = self.FullVigenere.decrypt_full_vigenere(chipertext, key, spaces)	
+			self.plaintext.delete("1.0", END)
+			self.plaintext.insert("1.0", plaintext)
+		elif current == 2 : # Auto-key Vigenere
+			chipertext = self.chipertext.get("1.0", "end-1c")
+			key = self.key.get()
+			spaces = int(self.spaces.get())
+			
+			plaintext = self.AutoKeyVigenere.decrypt_auto_key_vigenere(chipertext, key, spaces)	
+			self.plaintext.delete("1.0", END)
+			self.plaintext.insert("1.0", plaintext)
+		elif current == 3 : # Extended Vigenere
+			self.key.get()
+			self.spaces.get()
+		elif current == 4 : # Playfair
+			chipertext = self.chipertext.get("1.0", "end-1c")
+			key = self.key.get()
+			spaces = int(self.spaces.get())
+			
+			plaintext = self.PlayFair.decrypt_playfair(chipertext, key, spaces)	
+			self.plaintext.delete("1.0", END)
+			self.plaintext.insert("1.0", plaintext)
+		elif current == 5 : # Super Encription
+			self.key.get()
+			self.n_transpotition.get()
+			self.spaces.get()
+		elif current == 6 : # Affine
+			chipertext = self.chipertext.get("1.0", "end-1c")
+			m = int(self.m.get())
+			b = int(self.b.get())
+			spaces = int(self.spaces.get())
+			
+			plaintext = self.AffineChiper.decrypt_affine(chipertext, m, b, spaces)	
+			self.plaintext.delete("1.0", END)
+			self.plaintext.insert("1.0", plaintext)
+		elif current == 7 : # Hill
+			self.key.get()
+			self.spaces.get()
 
 gui = Gui()
 gui.window.mainloop()
