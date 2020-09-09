@@ -103,6 +103,6 @@ class HillCipher:
             plain_number = (self.inverse_key_matrix.dot(ciphertext_matrix) % 26).tolist()
             self.plaintext += "".join([chr(num + ord('A')) for num in plain_number])
 
-        self._postprocess_encrypt(spaces)
+        self._postprocess_decrypt(spaces)
 
         return self.plaintext
