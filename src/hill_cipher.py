@@ -1,5 +1,6 @@
 import string, math, numpy
 from sympy import Matrix
+from sympy.matrices.common import NonInvertibleMatrixError
 
 class HillCipher:
     def __init__(self):
@@ -35,9 +36,9 @@ class HillCipher:
                 k += 1
         self.key_matrix = numpy.array(self.key_matrix)
         try:
-            self.inverse_key_matrix = numpy.linalg.inv(self.key_matrix)
+            self.inverse_key_matrix = numpy.array(Matrix(self.key_matrix).inv_mod(26).tolist())
             self.invertible = True
-        except numpy.linalg.LinAlgError:
+        except NonInvertibleMatrixError:
             self.invertible = False
 
     def _postprocess_encrypt(self, spaces=0):
@@ -53,6 +54,9 @@ class HillCipher:
 
         if not self.invertible:
             return "Key Not Invertible"
+
+        if len(self.plaintext) % self.n_col != 0:
+            self.plaintext += "X" * (self.n_col - len(self.plaintext) % self.n_col)
 
         plaintext_group = [self.plaintext[i-self.n_col:i] for i in range(self.n_col, len(self.plaintext)+self.n_col, self.n_col)]
         
@@ -94,8 +98,10 @@ class HillCipher:
         if not self.invertible:
             return "Key Not Invertible"
 
+        if len(self.ciphertext) % self.n_col != 0:
+            self.ciphertext += "X" * (self.n_col - len(self.ciphertext) % self.n_col)
+
         ciphertext_group = [self.ciphertext[i-self.n_col:i] for i in range(self.n_col, len(self.ciphertext)+self.n_col, self.n_col)]
-        self.inverse_key_matrix = numpy.array(Matrix(self.key_matrix).inv_mod(26).tolist())
 
         self.plaintext = ""
         for text in ciphertext_group:

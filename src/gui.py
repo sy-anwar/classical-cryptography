@@ -16,7 +16,7 @@ class Gui:
 	def __init__(self):
 		self.window = Tk()
 		self.window.title("Tugas Kecil 1 IF4020 - 13517139 13517140")
-		self.window.geometry('550x590')
+		self.window.geometry('640x590')
 		self.window.resizable(False, False)
 
 		self.label_plaintext = Label(self.window, text="Plaintext")
