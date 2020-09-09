@@ -57,10 +57,32 @@ class VigenereExtended:
         self._generate_key_decrypt()
 
         self.plaintext = ""
-        for i in range(len(self.ciphertext)):
-            ch = (ord(self.ciphertext[i]) - ord(self.key[i]) + 256) % 256
+        chipertext_ord = self.process_chipertext_ord()
+        for i in range(len(chipertext_ord)):
+            ch = (chipertext_ord[i] - ord(self.key[i]) + 256) % 256
             self.plaintext += chr(ch)
 
         self._postprocess_decrypt(spaces)
 
         return self.plaintext
+    
+    def process_chipertext_ord(self) :
+        i = 0
+        chipertext_ord = []
+        while i < len(self.ciphertext):
+            hex = False
+            if i < (len(self.ciphertext) - 3) :
+                if (self.ciphertext[i] == '\\') and (self.ciphertext[i+1] == 'x') :
+                    temp = self.ciphertext[i+2] + self.ciphertext[i+3]
+                    chipertext_ord.append(int(temp, 16))
+                    hex = True
+                    i += 4
+            
+            if not hex :
+                chipertext_ord.append(ord(self.ciphertext[i]))
+                i += 1
+        
+        return chipertext_ord
+            
+
+                    
