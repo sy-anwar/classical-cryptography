@@ -6,13 +6,18 @@ from full_vigenere import FullVigenere
 from auto_key_vigenere import AutoKeyVigenere
 from playfair import Playfair
 from affine_chiper import AffineChiper
+from vigenere_standard import VigenereStandard
+from vigenere_extended import VigenereExtended
+from super_encription import SuperEncription
+from hill_cipher import HillCipher
 import string
 
 class Gui:
 	def __init__(self):
 		self.window = Tk()
-		self.window.title("Tugas Kecil 1 IF4020 13517139 13517140")
-		self.window.geometry('540x590')
+		self.window.title("Tugas Kecil 1 IF4020 - 13517139 13517140")
+		self.window.geometry('640x590')
+		self.window.resizable(False, False)
 
 		self.label_plaintext = Label(self.window, text="Plaintext")
 		self.label_plaintext.grid(column=0, row=0, sticky=W, padx=10)
@@ -30,7 +35,7 @@ class Gui:
 		self.label_choose_algorithm = Label(self.window, text='Algorithm :')
 		self.label_choose_algorithm.grid(column=0, row=3, pady=10, padx=10, sticky=SW)
 
-		self.combobox_algorithms = ttk.Combobox(self.window, values=self.algorithms, width=30)
+		self.combobox_algorithms = ttk.Combobox(self.window, values=self.algorithms, width=30, state="readonly")
 		self.combobox_algorithms.grid(column=1, row=3, pady=10, sticky=SW)
 		self.combobox_algorithms.current(0)
 		self.combobox_algorithms.bind('<<ComboboxSelected>>', self.handler)
@@ -78,6 +83,10 @@ class Gui:
 		self.AutoKeyVigenere = AutoKeyVigenere()
 		self.PlayFair = Playfair()
 		self.AffineChiper = AffineChiper()
+		self.VigenereStandard = VigenereStandard()
+		self.VigenereExtended = VigenereExtended()
+		self.SuperEncryption = SuperEncription()
+		self.HillCipher = HillCipher()
 
 	def handler(self, event):
 		current = self.combobox_algorithms.current()
@@ -132,6 +141,8 @@ class Gui:
 
 			self.label_spaces.grid(column=0, row=5, sticky=W, padx=10)
 			self.spaces.grid(column=1, row=5, sticky=W)
+			self.spaces.insert("1", "0")
+			self.spaces.config(state=DISABLED)
 
 			self.label_n_transpotition.grid_remove()
 			self.n_transpotition.grid_remove()
@@ -205,9 +216,14 @@ class Gui:
 	def encrypt_clicked(self) :
 		current = self.combobox_algorithms.current()
 		if current == 0 : # Vigenere
-			# self.key.get()
-			# self.spaces.get()
-			pass
+			plaintext = self.plaintext.get("1.0", "end-1c")
+			key = self.key.get()
+			spaces = int(self.spaces.get())
+
+			ciphertext = self.VigenereStandard.encrypt(key, plaintext, spaces)
+			self.chipertext.delete("1.0", END)
+			self.chipertext.insert("1.0", ciphertext)
+
 		elif current == 1 : # Full Vigenere
 			plaintext = self.plaintext.get("1.0", "end-1c")
 			key = self.key.get()
@@ -227,9 +243,13 @@ class Gui:
 			
 			print("key for decrypt : ", key_fix)
 		elif current == 3 : # Extended Vigenere
-			# self.key.get()
-			# self.spaces.get()
-			pass
+			plaintext = self.plaintext.get("1.0", "end-1c")
+			key = self.key.get()
+
+			ciphertext = self.VigenereExtended.encrypt(key, plaintext, 0)
+			self.chipertext.delete("1.0", END)
+			self.chipertext.insert("1.0", ciphertext)
+
 		elif current == 4 : # Playfair
 			plaintext = self.plaintext.get("1.0", "end-1c")
 			key = self.key.get()
@@ -239,10 +259,15 @@ class Gui:
 			self.chipertext.delete("1.0", END)
 			self.chipertext.insert("1.0", chipertext)
 		elif current == 5 : # Super Encription
-			# self.key.get()
-			# self.n_transpotition.get()
-			# self.spaces.get()
-			pass
+			plaintext = self.plaintext.get("1.0", "end-1c")
+			key = self.key.get()
+			n_transposition = int(self.n_transpotition.get())
+			spaces = int(self.spaces.get())
+
+			ciphertext = self.SuperEncryption.encrypt(key, plaintext, spaces, n_transposition)
+			self.chipertext.delete("1.0", END)
+			self.chipertext.insert("1.0", ciphertext)
+
 		elif current == 6 : # Affine
 			plaintext = self.plaintext.get("1.0", "end-1c")
 			m = int(self.m.get())
@@ -253,15 +278,25 @@ class Gui:
 			self.chipertext.delete("1.0", END)
 			self.chipertext.insert("1.0", chipertext)
 		elif current == 7 : # Hill
-			# self.key.get()
-			# self.spaces.get()
-			pass
+			plaintext = self.plaintext.get("1.0", "end-1c")
+			key = self.key.get()
+			spaces = int(self.spaces.get())
+
+			ciphertext = self.HillCipher.encrypt(key, plaintext, spaces)
+			self.chipertext.delete("1.0", END)
+			self.chipertext.insert("1.0", ciphertext)
 
 	def decrypt_clicked(self):
 		current = self.combobox_algorithms.current()
 		
 		if current == 0 : # Vigenere
-			pass
+			ciphertext = self.chipertext.get("1.0", "end-1c")
+			key = self.key.get()
+			spaces = int(self.spaces.get())
+			
+			plaintext = self.VigenereStandard.decrypt(key, ciphertext, spaces)	
+			self.plaintext.delete("1.0", END)
+			self.plaintext.insert("1.0", plaintext)
 		elif current == 1 : # Full Vigenere
 			chipertext = self.chipertext.get("1.0", "end-1c")
 			key = self.key.get()
@@ -279,7 +314,13 @@ class Gui:
 			self.plaintext.delete("1.0", END)
 			self.plaintext.insert("1.0", plaintext)
 		elif current == 3 : # Extended Vigenere
-			pass
+			ciphertext = self.chipertext.get("1.0", "end-1c")
+			key = self.key.get()
+			
+			plaintext = self.VigenereExtended.decrypt(key, ciphertext, 0)	
+			self.plaintext.delete("1.0", END)
+			self.plaintext.insert("1.0", plaintext)
+
 		elif current == 4 : # Playfair
 			chipertext = self.chipertext.get("1.0", "end-1c")
 			key = self.key.get()
@@ -289,7 +330,15 @@ class Gui:
 			self.plaintext.delete("1.0", END)
 			self.plaintext.insert("1.0", plaintext)
 		elif current == 5 : # Super Encription
-			pass
+			ciphertext = self.chipertext.get("1.0", "end-1c")
+			key = self.key.get()
+			n_transposition = int(self.n_transpotition.get())
+			spaces = int(self.spaces.get())
+			
+			plaintext = self.SuperEncryption.decrypt(key, ciphertext, spaces, n_transposition)	
+			self.plaintext.delete("1.0", END)
+			self.plaintext.insert("1.0", plaintext)
+
 		elif current == 6 : # Affine
 			chipertext = self.chipertext.get("1.0", "end-1c")
 			m = int(self.m.get())
@@ -300,7 +349,13 @@ class Gui:
 			self.plaintext.delete("1.0", END)
 			self.plaintext.insert("1.0", plaintext)
 		elif current == 7 : # Hill
-			pass
+			ciphertext = self.chipertext.get("1.0", "end-1c")
+			key = self.key.get()
+			spaces = int(self.spaces.get())
+			
+			plaintext = self.HillCipher.decrypt(key, ciphertext, spaces)	
+			self.plaintext.delete("1.0", END)
+			self.plaintext.insert("1.0", plaintext)
 
 	def choose_plaintext_file(self) :
 		filename = filedialog.askopenfilename()
