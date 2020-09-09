@@ -382,6 +382,3 @@ class Gui:
 			content = self.chipertext.get("1.0", "end-1c")
 			file.write(bytes(content.encode()))
 			file.close()
-			
-gui = Gui()
-gui.window.mainloop()
